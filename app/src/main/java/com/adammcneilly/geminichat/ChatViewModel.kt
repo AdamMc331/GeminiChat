@@ -1,8 +1,11 @@
 package com.adammcneilly.geminichat
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -34,6 +37,31 @@ class ChatViewModel(
 
     fun sendMessage() {
         sendMessage(state.value.prompt)
+    }
+
+    fun sendImage(
+        image: Bitmap
+    ) {
+        viewModelScope.launch {
+            val content = content(
+                role = "user",
+            ) {
+                image(image)
+                text("Describe this image")
+            }
+
+            val response = chat.sendMessage(content)
+            // Clear processing and add model's message.
+            _state.update { currentState ->
+                currentState.copy(
+                    history = currentState.history + ChatMessage(
+                        sender = ChatMessage.Sender.MODEL,
+                        message = response.text.orEmpty(),
+                    ),
+                    modelIsProcessing = false,
+                )
+            }
+        }
     }
 
     private fun sendMessage(message: String) {

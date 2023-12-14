@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -29,6 +31,7 @@ fun ChatContent(
     state: ChatViewState,
     onPromptChanged: (String) -> Unit,
     onSendClicked: () -> Unit,
+    onImageClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -78,6 +81,16 @@ fun ChatContent(
                         ),
                 )
             },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Photo,
+                    contentDescription = "Upload Image",
+                    modifier = Modifier
+                        .clickable(
+                            onClick = onImageClicked,
+                        )
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -107,6 +120,7 @@ private fun EmptyChatContentPreview() {
                 state = emptyState,
                 onPromptChanged = {},
                 onSendClicked = {},
+                onImageClicked = {},
                 modifier = Modifier
                     .fillMaxSize(),
             )
@@ -145,6 +159,7 @@ private fun FilledChatContentPreview() {
                 state = filledState,
                 onPromptChanged = {},
                 onSendClicked = {},
+                onImageClicked = {},
                 modifier = Modifier
                     .fillMaxSize(),
             )
