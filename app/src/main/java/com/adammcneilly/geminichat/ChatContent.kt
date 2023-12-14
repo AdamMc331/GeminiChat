@@ -1,6 +1,7 @@
 package com.adammcneilly.geminichat
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adammcneilly.geminichat.ui.theme.GeminiChatTheme
@@ -53,11 +56,22 @@ fun ChatContent(
                         ChatMessage.Sender.MODEL -> Alignment.CenterStart
                     }
 
-                    Text(
-                        text = message.message,
+                    Column(
                         modifier = Modifier
                             .align(alignment),
-                    )
+                    ) {
+
+                        message.images.forEach { bitmap ->
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = null,
+                            )
+                        }
+
+                        Text(
+                            text = message.message,
+                        )
+                    }
                 }
             }
         }

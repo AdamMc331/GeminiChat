@@ -43,11 +43,24 @@ class ChatViewModel(
         image: Bitmap
     ) {
         viewModelScope.launch {
+            val prompt = "Describe this image"
+
             val content = content(
                 role = "user",
             ) {
                 image(image)
-                text("Describe this image")
+                text(prompt)
+            }
+
+            _state.update { currentState ->
+                currentState.copy(
+                    history = currentState.history + ChatMessage(
+                        sender = ChatMessage.Sender.USER,
+                        message = prompt,
+                        images = listOf(image),
+                    ),
+                    modelIsProcessing = true,
+                )
             }
 
             val response = chat.sendMessage(content)
