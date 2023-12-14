@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
@@ -23,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -95,21 +93,16 @@ fun ChatContent(
                         ),
                 )
             },
-            // We left all of the framework to add image upload and
-            // sending to the model, but had to remove that functionality because
-            // the gemini-pro-vision model does not support multi turn chat.
-            // So we cut it off at the source (the image button) so we can add it back in
-            // at a later date hopefully.
-//            leadingIcon = {
-//                Icon(
-//                    imageVector = Icons.Default.Photo,
-//                    contentDescription = "Upload Image",
-//                    modifier = Modifier
-//                        .clickable(
-//                            onClick = onImageClicked,
-//                        )
-//                )
-//            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Photo,
+                    contentDescription = "Upload Image",
+                    modifier = Modifier
+                        .clickable(
+                            onClick = onImageClicked,
+                        )
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),

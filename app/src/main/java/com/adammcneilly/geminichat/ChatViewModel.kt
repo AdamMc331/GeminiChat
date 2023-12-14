@@ -3,7 +3,6 @@ package com.adammcneilly.geminichat
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,11 +10,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * @param[textModel] This [GenerativeModel] is used to create a multi-turn chat that allows us to
+ * ask specific questions, and it maintains context of the chat history.
+ * @param[imageModel] Currently the gemini-pro-vision model does not support multi turn chat, so we
+ * supply a second [GenerativeModel] that is used to run image based requests.
+ */
 class ChatViewModel(
-    generativeModel: GenerativeModel,
+    textModel: GenerativeModel,
+    private val imageModel: GenerativeModel,
 ) : ViewModel() {
 
-    private val chat = generativeModel.startChat()
+    private val chat = textModel.startChat()
 
     private val _state = MutableStateFlow(
         ChatViewState(
@@ -63,7 +69,7 @@ class ChatViewModel(
                 )
             }
 
-            val response = chat.sendMessage(content)
+            val response = imageModel.generateContent(content)
             // Clear processing and add model's message.
             _state.update { currentState ->
                 currentState.copy(
