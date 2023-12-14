@@ -1,12 +1,14 @@
 package com.adammcneilly.geminichat
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -97,17 +99,45 @@ class ChatViewModel(
                 )
             }
 
-            val response = chat.sendMessage(message)
-            // Clear processing and add model's message.
-            _state.update { currentState ->
-                currentState.copy(
-                    history = currentState.history + ChatMessage(
-                        sender = ChatMessage.Sender.MODEL,
-                        message = response.text.orEmpty(),
-                    ),
-                    modelIsProcessing = false,
+            var chatMessage = ChatMessage(
+                sender = ChatMessage.Sender.MODEL,
+                message = "",
+            )
+
+            Log.d("ChatViewModel", "Starting message stream!")
+            chat.sendMessageStream(message).onCompletion {
+                _state.update { currentState ->
+                    currentState.copy(
+                        modelIsProcessing = false,
+                    )
+                }
+            }.collect { response ->
+                Log.d("ChatViewModel", "Message stream chunk: ${response.text}")
+                chatMessage = chatMessage.copy(
+                    message = chatMessage.message + response.text.orEmpty(),
                 )
+
+                _state.update { currentState ->
+                    val historyWithoutLastModelMessage =  currentState.history
+                        .dropLastWhile { it.sender == ChatMessage.Sender.MODEL }
+                    val newHistory = historyWithoutLastModelMessage + chatMessage
+
+                    currentState.copy(
+                        history = newHistory,
+                    )
+                }
             }
+//            val response = chat.sendMessage(message)
+//            // Clear processing and add model's message.
+//            _state.update { currentState ->
+//                currentState.copy(
+//                    history = currentState.history + ChatMessage(
+//                        sender = ChatMessage.Sender.MODEL,
+//                        message = response.text.orEmpty(),
+//                    ),
+//                    modelIsProcessing = false,
+//                )
+//            }
         }
     }
 }
