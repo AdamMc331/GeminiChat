@@ -95,16 +95,21 @@ fun ChatContent(
                         ),
                 )
             },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Photo,
-                    contentDescription = "Upload Image",
-                    modifier = Modifier
-                        .clickable(
-                            onClick = onImageClicked,
-                        )
-                )
-            },
+            // We left all of the framework to add image upload and
+            // sending to the model, but had to remove that functionality because
+            // the gemini-pro-vision model does not support multi turn chat.
+            // So we cut it off at the source (the image button) so we can add it back in
+            // at a later date hopefully.
+//            leadingIcon = {
+//                Icon(
+//                    imageVector = Icons.Default.Photo,
+//                    contentDescription = "Upload Image",
+//                    modifier = Modifier
+//                        .clickable(
+//                            onClick = onImageClicked,
+//                        )
+//                )
+//            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),

@@ -44,7 +44,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     val generativeModel = GenerativeModel(
-                        modelName = "gemini-pro-vision",
+                        // Currently unable to support gemini-pro-vision because that model
+                        // does not support multi turn chat.
+                        modelName = "gemini-pro",
                         apiKey = BuildConfig.apiKey
                     )
 
